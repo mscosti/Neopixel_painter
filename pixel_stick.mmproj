@@ -1,7 +1,7 @@
 <mm_project serial_port="COM4" board="Arduino Uno" programmer="" includePaths="" libPaths="" libs="" default="yes" useCodeAutomation="yes" linkPrintfVersion="1" serialPortSpeed="" >
   <files>
     <file name="pixel_stick_main.cpp" open="yes" />
-    <file name="pixel_stick_main.h" open="yes" />
+    <file name="pixel_stick_main.h" open="no" />
     <file name="imagereader.cpp" open="yes" />
     <file name="imagereader.h" open="yes" />
   </files>
@@ -9,5 +9,10 @@
   </extras>
   <externals>
     <external name="C:\Program Files (x86)\Arduino\libraries\NeoPixel\Adafruit_NeoPixel.cpp" />
+    <external name="C:\Program Files (x86)\Arduino\libraries\SD\File.cpp" />
+    <external name="C:\Program Files (x86)\Arduino\libraries\SD\SD.cpp" />
+    <external name="C:\Program Files (x86)\Arduino\libraries\SD\utility\Sd2Card.cpp" />
+    <external name="C:\Program Files (x86)\Arduino\libraries\SD\utility\SdFile.cpp" />
+    <external name="C:\Program Files (x86)\Arduino\libraries\SD\utility\SdVolume.cpp" />
   </externals>
 </mm_project>

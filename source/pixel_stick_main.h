@@ -5,6 +5,14 @@
  
 #include <arduino.h>
 #include <Adafruit_NeoPixel.h>
+#include <SdInfo.h>
+#include <SdFatUtil.h>
+#include <SdFatmainpage.h>
+#include <SdFat.h>
+#include <Sd2PinMap.h>
+#include <Sd2Card.h>
+#include <FatStructs.h>
+#include <SD.h>
  
 //-------------------------------------------------------------------
  
@@ -39,4 +47,5 @@ void setup();
 //-------------------------------------------------------------------
 #endif
 //-------------------------------------------------------------------
+ 
  

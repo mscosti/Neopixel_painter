@@ -5,24 +5,43 @@ description: <type what this file does>
 *************************************************************/
 
 #include "imagereader.h"
+#include <SD.h>
 //#include <string>
 //
 //using namespace std;
 
 class ImageReader {
-    int width, height, currentRow;
+    int width, height;
+    unsigned char info[54];
+    File bitmap;
   public:
-    ImageReader (String);
+    ImageReader (char*);
     int* readNextRow ();
 };
 
-ImageReader::ImageReader (String filename) {
-  currentRow=0;
-  height = 60;
-  width = 60;
+ImageReader::ImageReader (char* filename) {
+  bitmap = SD.open(filename);
+  
+  int i = 0;
+  for (i; i < 54; i++){
+	info[i] = bitmap.read();
+  }
+  
+  width = *(int*)&info[18];
+  height = *(int*)&info[22];
 }
 
 int* ImageReader::readNextRow () {
-
-	//todo
+	int size = 3 * width;
+	int i = 0;
+	
+	int row[size];
+	
+	for (i; i < size; i++){
+		unsigned char val = bitmap.read();
+		row[i] = (int)val;
+	}
+	
+	return row;
 }
+
