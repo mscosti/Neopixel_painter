@@ -2,6 +2,8 @@
   <files>
     <file name="pixel_stick_main.cpp" open="yes" />
     <file name="pixel_stick_main.h" open="yes" />
+    <file name="imagereader.cpp" open="yes" />
+    <file name="imagereader.h" open="yes" />
   </files>
   <extras>
   </extras>
