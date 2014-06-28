@@ -24,6 +24,13 @@
 //		simply delete the lines below, with "&MM_DECLA" text
 //===================================================================
 //---- DO NOT DELETE THIS LINE -- @MM_DECLA_BEG@---------------------
+void theaterChaseRainbow(uint8_t wait);
+void theaterChase(uint32_t c, uint8_t wait);
+void rainbowCycle(uint8_t wait);
+void rainbow(uint8_t wait);
+void colorWipe(uint32_t c, uint8_t wait);
+void loop();
+void setup();
 //---- DO NOT DELETE THIS LINE -- @MM_DECLA_END@---------------------
 // -> ...AND HERE. This space is reserved for automated code generation!
 //===================================================================
