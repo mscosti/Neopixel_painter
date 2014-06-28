@@ -1,0 +1,11 @@
+<mm_project serial_port="COM1" board="Arduino Uno" programmer="" includePaths="" libPaths="" libs="" default="yes" useCodeAutomation="yes" linkPrintfVersion="1" serialPortSpeed="" >
+  <files>
+    <file name="pixel_stick_main.cpp" open="yes" />
+    <file name="pixel_stick_main.h" open="no" />
+  </files>
+  <extras>
+  </extras>
+  <externals>
+    <external name="C:\Program Files (x86)\Arduino\libraries\NeoPixel\Adafruit_NeoPixel.cpp" />
+  </externals>
+</mm_project>
