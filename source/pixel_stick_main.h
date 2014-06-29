@@ -37,6 +37,12 @@ void theaterChase(uint32_t c, uint8_t wait);
 void rainbowCycle(uint8_t wait);
 void rainbow(uint8_t wait);
 void colorWipe(uint32_t c, uint8_t wait);
+void displayLine(int* row);
+void clearPixels();
+void testParseString();
+void imageToRows(int* imageArray, int* rowArray);
+void parseString (char* toParse, int* toArray);
+void createDummyRow(int* row);
 void loop();
 void setup();
 //---- DO NOT DELETE THIS LINE -- @MM_DECLA_END@---------------------

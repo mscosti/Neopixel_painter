@@ -1,4 +1,4 @@
-<mm_project serial_port="COM4" board="Arduino Uno" programmer="" includePaths="" libPaths="" libs="" default="yes" useCodeAutomation="yes" linkPrintfVersion="1" serialPortSpeed="" >
+<mm_project serial_port="COM3" board="Arduino Uno" programmer="" includePaths="" libPaths="" libs="" default="yes" useCodeAutomation="yes" linkPrintfVersion="1" serialPortSpeed="" >
   <files>
     <file name="pixel_stick_main.cpp" open="yes" />
     <file name="pixel_stick_main.h" open="no" />
