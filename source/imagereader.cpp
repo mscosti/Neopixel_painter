@@ -5,43 +5,35 @@ description: <type what this file does>
 *************************************************************/
 
 #include "imagereader.h"
-#include <SD.h>
-//#include <string>
-//
-//using namespace std;
 
-class ImageReader {
-    int width, height;
-    unsigned char info[54];
-    File bitmap;
-  public:
-    ImageReader (char*);
-    int* readNextRow ();
-};
+// empty constructor
+// for now it doesn't have to do anything
+ImageReader::ImageReader(){ }
 
-ImageReader::ImageReader (char* filename) {
-  bitmap = SD.open(filename);
-  
-  int i = 0;
-  for (i; i < 54; i++){
-	info[i] = bitmap.read();
-  }
-  
-  width = *(int*)&info[18];
-  height = *(int*)&info[22];
+void ImageReader::loadImage (char* filename) {
+	bitmap = SD.open(filename);
+
+	// read in all the metadata
+	for (int i = 0; i < 54; i++){
+		info[i] = bitmap.read();
+	}
+
+	// width and height are 4 bytes at 
+	// offset 18 and 22 respectively
+	width = info[18];
+	height = info[22];
+	
+	// rowstep = bytes per channel * pixel width
+	// image is in RGB, so 3 channels at 1 byte per channel
+	rowStep = width*3;
 }
 
-int* ImageReader::readNextRow () {
-	int size = 3 * width;
-	int i = 0;
-	
-	int row[size];
-	
-	for (i; i < size; i++){
-		unsigned char val = bitmap.read();
-		row[i] = (int)val;
+// read an entire row into the passed row array
+void ImageReader::readNextRow (uint8_t* row) {
+
+	for (int i = 0; i < rowStep; i++){
+		uint8_t val = bitmap.read();
+		row[i] = val;
 	}
-	
-	return row;
 }
 

@@ -4,12 +4,30 @@
 //-------------------------------------------------------------------
 
 #include <arduino.h>
-
+#include <SD.h>
 //-------------------------------------------------------------------
 
 //-------------------------------------------------------------------
 
-// Put yout declarations here
+class ImageReader {
+	public:
+		// width and height of the image
+		int width, height;
+		
+		// the step size of a row in bytes
+		int rowStep;
+		
+		// All the metadata
+		uint8_t info[54];
+		
+		// The bitmap file itself that will be read
+		File bitmap;
+		
+		// class function definitions
+		ImageReader();
+		void loadImage(char*);
+		void readNextRow (uint8_t*);
+};
 
 //-------------------------------------------------------------------
 

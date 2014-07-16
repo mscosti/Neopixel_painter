@@ -13,6 +13,14 @@
 #include <Sd2Card.h>
 #include <FatStructs.h>
 #include <SD.h>
+#include <SdInfo.h>
+#include <SdFatUtil.h>
+#include <SdFatmainpage.h>
+#include <SdFat.h>
+#include <Sd2PinMap.h>
+#include <Sd2Card.h>
+#include <FatStructs.h>
+#include <SD.h>
  
 //-------------------------------------------------------------------
  
@@ -32,17 +40,14 @@
 //		simply delete the lines below, with "&MM_DECLA" text
 //===================================================================
 //---- DO NOT DELETE THIS LINE -- @MM_DECLA_BEG@---------------------
-void theaterChaseRainbow(uint8_t wait);
-void theaterChase(uint32_t c, uint8_t wait);
-void rainbowCycle(uint8_t wait);
-void rainbow(uint8_t wait);
-void colorWipe(uint32_t c, uint8_t wait);
+void createDummyRow(int* row);
 void displayLine(int* row);
 void clearPixels();
 void testParseString();
 void imageToRows(int* imageArray, int* rowArray);
 void parseString (char* toParse, int* toArray);
-void createDummyRow(int* row);
+void printImageRow();
+void serialEvent();
 void loop();
 void setup();
 //---- DO NOT DELETE THIS LINE -- @MM_DECLA_END@---------------------
@@ -53,5 +58,6 @@ void setup();
 //-------------------------------------------------------------------
 #endif
 //-------------------------------------------------------------------
+ 
  
  
