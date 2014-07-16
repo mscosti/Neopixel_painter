@@ -11,8 +11,8 @@ description: <type what this file does>
 
 #define PIN 6
 #define NUMPIXELS 60
-#define WIDTH 3
-#define HEIGHT 2
+#define WIDTH 20
+#define HEIGHT 20
 #define WAITTIME 200
 #define ROWSIZE WIDTH*3
 #define PIXELSINIMAGE WIDTH*HEIGHT*3
@@ -27,10 +27,10 @@ description: <type what this file does>
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 ImageReader imageReader = ImageReader();
 
-int aRow[ROWSIZE];
-int anImage[PIXELSINIMAGE];
 String inputString = "";
 boolean stringComplete = false;
+char aRow[ROWSIZE];
+char anImage[PIXELSINIMAGE];
 
 
 void setup() {
@@ -62,7 +62,7 @@ void loop() {
 //		 stringComplete = false;
 //	  }
 
-
+//	testParseString();
 }
 
 void serialEvent() {
@@ -110,12 +110,12 @@ void printImageRow(){
 }
 //takes a comma deliminated string of RGB values and writes them into one large array containing all the image data
 //good idea to pass anImage (global array) for second parameter
-void parseString (char* toParse, int* toArray){
+void parseString (char* toParse, char* toArray){
 	char* savePointer;
 	char* token;
 	int i;
 	while(token = strtok_r(toParse, ",", &savePointer)){
-		toArray[i] = atoi(token);
+		toArray[i] = (char) atoi(token);
 		toParse = savePointer;
 		i++;
 	}
@@ -123,7 +123,7 @@ void parseString (char* toParse, int* toArray){
 
 //takes a large array containing all the image data and separates into row sized (60 pixel) array
 //good idea to pass anImage (global array) for first parameter and aRow (global array) for second parameter
-void imageToRows(int* imageArray, int* rowArray){
+void imageToRows(char* imageArray, char* rowArray){
 	int i;
 	for(i=0;i<HEIGHT;i++){
 		rowArray = imageArray + i*ROWSIZE;
@@ -149,12 +149,12 @@ void clearPixels(){
 
 //takes in a row-sized (60 pixel) array and tells the pixel stick to display those colors
 //good idea to pass in aRow (global array) as parameter
-void displayLine(int* row){
+void displayLine(char* row){
 	int pixelIndex;
 	int colorIndex = 0;
 	uint32_t color;
 	for(pixelIndex=0; pixelIndex<WIDTH; pixelIndex++){
-		color = strip.Color(row[colorIndex], row[colorIndex+1], row[colorIndex+2]);
+		color = strip.Color((row[colorIndex]), (row[colorIndex+1]), (row[colorIndex+2]));
 		strip.setPixelColor(pixelIndex, color);
 		colorIndex += 3;
 	}

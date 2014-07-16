@@ -41,11 +41,11 @@
 //===================================================================
 //---- DO NOT DELETE THIS LINE -- @MM_DECLA_BEG@---------------------
 void createDummyRow(int* row);
-void displayLine(int* row);
+void displayLine(char* row);
 void clearPixels();
 void testParseString();
-void imageToRows(int* imageArray, int* rowArray);
-void parseString (char* toParse, int* toArray);
+void imageToRows(char* imageArray, char* rowArray);
+void parseString (char* toParse, char* toArray);
 void printImageRow();
 void serialEvent();
 void loop();
