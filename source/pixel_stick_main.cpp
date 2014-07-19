@@ -11,10 +11,10 @@ description: <type what this file does>
 
 #define PIN 6
 #define NUMPIXELS 60
-#define WIDTH 20
-#define HEIGHT 20
-#define WAITTIME 200
-#define ROWSIZE WIDTH*3
+//#define WIDTH 60
+//#define HEIGHT 100
+#define WAITTIME 100
+//#define ROWSIZE WIDTH*3
 #define PIXELSINIMAGE WIDTH*HEIGHT*3
 
 // Parameter 1 = number of pixels in strip
@@ -26,11 +26,13 @@ description: <type what this file does>
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 ImageReader imageReader = ImageReader();
+boolean input = true;
 
 String inputString = "";
 boolean stringComplete = false;
 char aRow[ROWSIZE];
 char anImage[PIXELSINIMAGE];
+
 
 
 void setup() {
@@ -45,24 +47,80 @@ void setup() {
 		return;
 	}
 	Serial.println("initialization done.");
-
-	// test to print one row of the image
-	printImageRow();
+	
 }
 
 void loop() {
-//	Serial.println("test");
-//	parseString(helloWorld, anImage);
-//	imageToRows(anImage, aRow);
-//	Serial.println("nope\n");
-//	if (stringComplete) {
-//		 Serial.println(inputString); 
-//		 // clear the string:
-//		 inputString = "";
-//		 stringComplete = false;
-//	  }
 
-//	testParseString();
+	displayPic();
+	
+}
+
+void displayPic() {
+// create a row initialized to the rowStep of the image
+	imageReader.loadImage("/fck8chrs.bmp");
+	uint8_t row[imageReader.rowStep];
+	
+	for (int i = 0; i < imageReader.height; i++){
+		// read the next row into the row array
+		imageReader.readNextRow(row);
+		displayLine(row);
+	}
+
+}
+
+//takes in a row-sized (60 pixel) array and tells the pixel stick to display those colors
+//good idea to pass in aRow (global array) as parameter
+void displayLine(uint8_t* row){
+	
+	int pixelIndex;
+	int colorIndex = 0;
+	uint32_t color;
+	for(pixelIndex=0; pixelIndex<imageReader.width; pixelIndex++){
+		color = strip.Color((row[colorIndex+2]), (row[colorIndex+1]), (row[colorIndex]));
+		strip.setPixelColor(pixelIndex, color);
+		colorIndex += 3;
+	}
+	strip.show();
+	delay(WAITTIME);
+}
+
+
+
+/* DEPRECATED */
+//a testing function
+void createDummyRow(int* row){
+	int i;
+	for(i=0; i<30; i+=3){
+		row[i] = 255;
+		row[i+1] = 0;
+		row[i+2] = 0;
+	}
+	for(i=30; i<60; i+=3){
+		row[i] = 255;
+		row[i+1] = 255;
+		row[i+2] = 0;
+	}
+	for(i=60; i<90; i+=3){
+		row[i] = 0;
+		row[i+1] = 255;
+		row[i+2] = 0;
+	}
+	for(i=90; i<120; i+=3){
+		row[i] = 0;
+		row[i+1] = 255;
+		row[i+2] = 255;
+	}
+	for(i=120; i<150; i+=3){
+		row[i] = 0;
+		row[i+1] = 0;
+		row[i+2] = 255;
+	}
+	for(i=150; i<180; i+=3){
+		row[i] = 255;
+		row[i+1] = 0;
+		row[i+2] = 255;
+	}
 }
 
 void serialEvent() {
@@ -85,7 +143,7 @@ void serialEvent() {
 void printImageRow(){
 
 // load an image.  For now, pick redbox.bmp by default
-	imageReader.loadImage("/redbox.bmp");
+	imageReader.loadImage("/bluebox.bmp");
 	Serial.print("Width: ");
 	Serial.println(imageReader.width);
 	Serial.print("Height: ");
@@ -123,7 +181,7 @@ void parseString (char* toParse, char* toArray){
 
 //takes a large array containing all the image data and separates into row sized (60 pixel) array
 //good idea to pass anImage (global array) for first parameter and aRow (global array) for second parameter
-void imageToRows(char* imageArray, char* rowArray){
+void imageToRows(uint8_t* imageArray, uint8_t* rowArray){
 	int i;
 	for(i=0;i<HEIGHT;i++){
 		rowArray = imageArray + i*ROWSIZE;
@@ -145,55 +203,4 @@ void clearPixels(){
 		strip.setPixelColor(i, black);
 	}
 	strip.show();
-}
-
-//takes in a row-sized (60 pixel) array and tells the pixel stick to display those colors
-//good idea to pass in aRow (global array) as parameter
-void displayLine(char* row){
-	int pixelIndex;
-	int colorIndex = 0;
-	uint32_t color;
-	for(pixelIndex=0; pixelIndex<WIDTH; pixelIndex++){
-		color = strip.Color((row[colorIndex]), (row[colorIndex+1]), (row[colorIndex+2]));
-		strip.setPixelColor(pixelIndex, color);
-		colorIndex += 3;
-	}
-	strip.show();
-	delay(WAITTIME);
-	clearPixels();
-}
-
-//a testing function
-void createDummyRow(int* row){
-	int i;
-	for(i=0; i<30; i+=3){
-		row[i] = 255;
-		row[i+1] = 0;
-		row[i+2] = 0;
-	}
-	for(i=30; i<60; i+=3){
-		row[i] = 255;
-		row[i+1] = 255;
-		row[i+2] = 0;
-	}
-	for(i=60; i<90; i+=3){
-		row[i] = 0;
-		row[i+1] = 255;
-		row[i+2] = 0;
-	}
-	for(i=90; i<120; i+=3){
-		row[i] = 0;
-		row[i+1] = 255;
-		row[i+2] = 255;
-	}
-	for(i=120; i<150; i+=3){
-		row[i] = 0;
-		row[i+1] = 0;
-		row[i+2] = 255;
-	}
-	for(i=150; i<180; i+=3){
-		row[i] = 255;
-		row[i+1] = 0;
-		row[i+2] = 255;
-	}
 }

@@ -41,13 +41,14 @@
 //===================================================================
 //---- DO NOT DELETE THIS LINE -- @MM_DECLA_BEG@---------------------
 void createDummyRow(int* row);
-void displayLine(char* row);
+void displayLine(uint8_t* row);
 void clearPixels();
 void testParseString();
-void imageToRows(char* imageArray, char* rowArray);
+void imageToRows(uint8_t* imageArray, uint8_t* rowArray);
 void parseString (char* toParse, char* toArray);
 void printImageRow();
 void serialEvent();
+void displayPic();
 void loop();
 void setup();
 //---- DO NOT DELETE THIS LINE -- @MM_DECLA_END@---------------------
