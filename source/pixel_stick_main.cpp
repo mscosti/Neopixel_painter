@@ -11,11 +11,12 @@ description: <type what this file does>
 
 #define PIN 6
 #define NUMPIXELS 60
-//#define WIDTH 60
-//#define HEIGHT 100
-#define WAITTIME 100
-//#define ROWSIZE WIDTH*3
-#define PIXELSINIMAGE WIDTH*HEIGHT*3
+#define MAXPICTURES 20
+#define WIDTH 60
+#define HEIGHT 100
+#define WAITTIME 50
+#define ROWSIZE WIDTH*3
+#define PIXELSINIMAGE WIDTH*HEIGHT
 
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
@@ -32,9 +33,10 @@ String inputString = "";
 boolean stringComplete = false;
 char aRow[ROWSIZE];
 char anImage[PIXELSINIMAGE];
+String pictures[MAXPICTURES];
 
 
-
+File root;
 void setup() {
 	Serial.begin(9600);
 	strip.begin();
@@ -52,13 +54,37 @@ void setup() {
 
 void loop() {
 
-	displayPic();
+//	delay(10000);
+//	displayPic("hllowrld.bmp")
+	displayMenu();
 	
 }
 
-void displayPic() {
+void displayMenu(){
+	root = SD.open("/");
+	int numImgs = printDirectory(root,0);
+	Serial.println("\n");
+	Serial.println("Select one of the images above");
+	// wait until serial is available
+	while(!Serial.available()){}
+	// serial data recieved, continue
+	int img = Serial.parseInt();
+	Serial.println(img);
+	if (img <= numImgs){
+		char fileBuff[13];
+		
+		pictures[img].toCharArray(fileBuff,13);
+		Serial.println(fileBuff);
+		displayPic(fileBuff);
+	}
+	else {
+		Serial.println("do not compute");
+	}
+}
+
+void displayPic(char* imgFile) {
 // create a row initialized to the rowStep of the image
-	imageReader.loadImage("/fck8chrs.bmp");
+	imageReader.loadImage(imgFile);
 	uint8_t row[imageReader.rowStep];
 	
 	for (int i = 0; i < imageReader.height; i++){
@@ -66,7 +92,8 @@ void displayPic() {
 		imageReader.readNextRow(row);
 		displayLine(row);
 	}
-
+	
+	clearPixels();
 }
 
 //takes in a row-sized (60 pixel) array and tells the pixel stick to display those colors
@@ -83,6 +110,46 @@ void displayLine(uint8_t* row){
 	}
 	strip.show();
 	delay(WAITTIME);
+}
+
+int printDirectory(File dir, int numTabs) {
+	int numItems = 0;
+   while(true) {
+     
+     File entry =  dir.openNextFile();
+     if (! entry) {
+       // no more files
+       //Serial.println("**nomorefiles**");
+       dir.rewindDirectory();
+       break;
+     }
+     for (uint8_t i=0; i<numTabs; i++) {
+       Serial.print('\t');
+     }
+     Serial.print(entry.name());
+     if (entry.isDirectory()) {
+       Serial.println("/");
+       printDirectory(entry, numTabs+1);
+     } else {
+       // files have sizes, directories do not
+       pictures[numItems] = entry.name();
+       Serial.print("\t\t: ");
+       Serial.println(numItems);
+       numItems++;
+     }
+     entry.close();
+   }
+   return numItems;
+}
+
+//turns off all the pixels
+void clearPixels(){
+	uint32_t black = strip.Color(0,0,0);
+	int i;
+	for(i=0; i<NUMPIXELS; i++){
+		strip.setPixelColor(i, black);
+	}
+	strip.show();
 }
 
 
@@ -195,12 +262,4 @@ void testParseString(){
 	parseString(toParse, anImage);
 }
 
-//turns off all the pixels
-void clearPixels(){
-	uint32_t black = strip.Color(0,0,0);
-	int i;
-	for(i=0; i<NUMPIXELS; i++){
-		strip.setPixelColor(i, black);
-	}
-	strip.show();
-}
+
