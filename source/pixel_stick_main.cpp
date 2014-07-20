@@ -12,11 +12,7 @@ description: <type what this file does>
 #define PIN 6
 #define NUMPIXELS 60
 #define MAXPICTURES 20
-#define WIDTH 60
-#define HEIGHT 100
 #define WAITTIME 50
-#define ROWSIZE WIDTH*3
-#define PIXELSINIMAGE WIDTH*HEIGHT
 
 
 // Parameter 1 = number of pixels in strip
@@ -29,13 +25,7 @@ description: <type what this file does>
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 ImageReader imageReader = ImageReader();
 
-String inputString = "";
-boolean stringComplete = false;
-char aRow[ROWSIZE];
-char anImage[PIXELSINIMAGE];
 String pictures[MAXPICTURES];
-
-
 File root;
 
 void setup() {
@@ -61,39 +51,58 @@ void loop() {
 	// Print out all files from root
 	int numImgs = printDirectory(root,0);
 	
-	// wait for menu selection from user over serial
-	displayMenu(numImgs);
+	// buffer to put the selected image into
+	char selectedImage[13];
+	
+	// wait for image selection from user over serial
+	imageSelect(numImgs,selectedImage);
+	
+	// display the image
+	displayPic(selectedImage);
 	
 }
 
 /*
-	opens the root directory of 
-
+	Waits for the user to select an image,
+	and returns the filename of the selected
+	int the passed in buffer.
+	
+	@param int numImgs: number of images to select from
+	@param char* fileBuff: the buffer to put the filename in
 */
-void displayMenu(int numImgs){
+void imageSelect(int numImgs,char* fileBuff){
 	
 	Serial.println("\n");
 	Serial.println("Select one of the images above");
+	
 	// wait until serial is available
 	while(!Serial.available()){}
+	
 	// serial data recieved, continue
 	int img = Serial.parseInt();
 	Serial.println(img);
+	
 	if ((img <= numImgs) && (0 <= img)){
-		char fileBuff[13];
 		
 		pictures[img].toCharArray(fileBuff,13);
 		Serial.println(fileBuff);
-		displayPic(fileBuff);
 	}
 	else {
 		Serial.println("do not compute");
 	}
 }
 
+/*
+	loads the image given, and displays it on the 
+	pixel stick row by row
+	
+	@param char* imgFile: the bitmap image file to display
+*/
 void displayPic(char* imgFile) {
-// create a row initialized to the rowStep of the image
+	// load the image into the imageReader
 	imageReader.loadImage(imgFile);
+	
+	// create a row initialized to the rowStep of the image
 	uint8_t row[imageReader.rowStep];
 	
 	for (int i = 0; i < imageReader.height; i++){
@@ -102,11 +111,15 @@ void displayPic(char* imgFile) {
 		displayLine(row);
 	}
 	
+	// turn off all pixels after picture is drawn
 	clearPixels();
 }
 
-//takes in a row-sized (60 pixel) array and tells the pixel stick to display those colors
-//good idea to pass in aRow (global array) as parameter
+/*	
+	Displays one row of an image
+	
+	@param uint8_t* row: array of RGB values per pixel
+*/
 void displayLine(uint8_t* row){
 	
 	int pixelIndex;
@@ -121,14 +134,22 @@ void displayLine(uint8_t* row){
 	delay(WAITTIME);
 }
 
+/*
+	prints our the all the files from the given directory
+	
+	@param File dir: directory to print from
+	@param int numTabs: number of tabs to insert for clean printing 
+							  of sub directories
+							  
+	@return numItems: number of files found in the directory
+*/
 int printDirectory(File dir, int numTabs) {
 	int numItems = 0;
    while(true) {
      
      File entry =  dir.openNextFile();
      if (! entry) {
-       // no more files
-       //Serial.println("**nomorefiles**");
+       // no more files, rewind for next time
        dir.rewindDirectory();
        break;
      }
@@ -151,7 +172,9 @@ int printDirectory(File dir, int numTabs) {
    return numItems;
 }
 
-//turns off all the pixels
+/*
+	Turns off all of the pixels
+*/
 void clearPixels(){
 	uint32_t black = strip.Color(0,0,0);
 	int i;
@@ -162,63 +185,13 @@ void clearPixels(){
 }
 
 
-
-/* DEPRECATED */
-//a testing function
-void createDummyRow(int* row){
-	int i;
-	for(i=0; i<30; i+=3){
-		row[i] = 255;
-		row[i+1] = 0;
-		row[i+2] = 0;
-	}
-	for(i=30; i<60; i+=3){
-		row[i] = 255;
-		row[i+1] = 255;
-		row[i+2] = 0;
-	}
-	for(i=60; i<90; i+=3){
-		row[i] = 0;
-		row[i+1] = 255;
-		row[i+2] = 0;
-	}
-	for(i=90; i<120; i+=3){
-		row[i] = 0;
-		row[i+1] = 255;
-		row[i+2] = 255;
-	}
-	for(i=120; i<150; i+=3){
-		row[i] = 0;
-		row[i+1] = 0;
-		row[i+2] = 255;
-	}
-	for(i=150; i<180; i+=3){
-		row[i] = 255;
-		row[i+1] = 0;
-		row[i+2] = 255;
-	}
-}
-
-void serialEvent() {
-	while (Serial.available()) {
-    // get the new byte:
-    char inChar = (char)Serial.read(); 
-    // add it to the inputString:
-    inputString += inChar;
-    // if the incoming character is a newline, set a flag
-    // so the main loop can do something about it:
-    if (inChar == '\n') {
-      stringComplete = true;
-    } 
-  }
-}
-
-
-// A test to both load an image and print out the first
-// row of RGB values of the image
+/*
+	A test to both load an image and print out the first
+	row of RGB values of the image
+*/
 void printImageRow(){
 
-// load an image.  For now, pick redbox.bmp by default
+	// load an image.  For now, pick redbox.bmp by default
 	imageReader.loadImage("/bluebox.bmp");
 	Serial.print("Width: ");
 	Serial.println(imageReader.width);
@@ -241,34 +214,6 @@ void printImageRow(){
 		Serial.println(row[i]);
 	}
 	
-}
-//takes a comma deliminated string of RGB values and writes them into one large array containing all the image data
-//good idea to pass anImage (global array) for second parameter
-void parseString (char* toParse, char* toArray){
-	char* savePointer;
-	char* token;
-	int i;
-	while(token = strtok_r(toParse, ",", &savePointer)){
-		toArray[i] = (char) atoi(token);
-		toParse = savePointer;
-		i++;
-	}
-}
-
-//takes a large array containing all the image data and separates into row sized (60 pixel) array
-//good idea to pass anImage (global array) for first parameter and aRow (global array) for second parameter
-void imageToRows(uint8_t* imageArray, uint8_t* rowArray){
-	int i;
-	for(i=0;i<HEIGHT;i++){
-		rowArray = imageArray + i*ROWSIZE;
-		displayLine(rowArray);
-	}
-}
-
-//a testing function
-void testParseString(){
-	char* toParse = "255,0,0,0,255,0,0,0,255,255,255,0,255,0,255,0,255,255";
-	parseString(toParse, anImage);
 }
 
 

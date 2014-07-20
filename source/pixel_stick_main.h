@@ -40,17 +40,12 @@
 //		simply delete the lines below, with "&MM_DECLA" text
 //===================================================================
 //---- DO NOT DELETE THIS LINE -- @MM_DECLA_BEG@---------------------
-void testParseString();
-void imageToRows(uint8_t* imageArray, uint8_t* rowArray);
-void parseString (char* toParse, char* toArray);
 void printImageRow();
-void serialEvent();
-void createDummyRow(int* row);
 void clearPixels();
 int printDirectory(File dir, int numTabs);
 void displayLine(uint8_t* row);
 void displayPic(char* imgFile);
-void displayMenu(int numImgs);
+void imageSelect(int numImgs,char* fileBuff);
 void loop();
 void setup();
 //---- DO NOT DELETE THIS LINE -- @MM_DECLA_END@---------------------
