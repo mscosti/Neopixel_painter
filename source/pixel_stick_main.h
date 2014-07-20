@@ -50,7 +50,7 @@ void clearPixels();
 int printDirectory(File dir, int numTabs);
 void displayLine(uint8_t* row);
 void displayPic(char* imgFile);
-void displayMenu();
+void displayMenu(int numImgs);
 void loop();
 void setup();
 //---- DO NOT DELETE THIS LINE -- @MM_DECLA_END@---------------------

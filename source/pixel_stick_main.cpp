@@ -18,6 +18,7 @@ description: <type what this file does>
 #define ROWSIZE WIDTH*3
 #define PIXELSINIMAGE WIDTH*HEIGHT
 
+
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
 // Parameter 3 = pixel type flags, add together as needed:
@@ -27,7 +28,6 @@ description: <type what this file does>
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 ImageReader imageReader = ImageReader();
-boolean input = true;
 
 String inputString = "";
 boolean stringComplete = false;
@@ -37,32 +37,41 @@ String pictures[MAXPICTURES];
 
 
 File root;
+
 void setup() {
 	Serial.begin(9600);
 	strip.begin();
 	strip.show(); // Initialize all pixels to 'off'
 	pinMode(10, OUTPUT);
 
-	// check to make sure the SD card in all set
+	// check to make sure the SD card is all set
 	if (!SD.begin(10)) {
 		Serial.println("initialization failed!");
 		return;
 	}
 	Serial.println("initialization done.");
 	
+	// open root for accessing all files 
+	root = SD.open("/");
+	
 }
 
 void loop() {
 
-//	delay(10000);
-//	displayPic("hllowrld.bmp")
-	displayMenu();
+	// Print out all files from root
+	int numImgs = printDirectory(root,0);
+	
+	// wait for menu selection from user over serial
+	displayMenu(numImgs);
 	
 }
 
-void displayMenu(){
-	root = SD.open("/");
-	int numImgs = printDirectory(root,0);
+/*
+	opens the root directory of 
+
+*/
+void displayMenu(int numImgs){
+	
 	Serial.println("\n");
 	Serial.println("Select one of the images above");
 	// wait until serial is available
@@ -70,7 +79,7 @@ void displayMenu(){
 	// serial data recieved, continue
 	int img = Serial.parseInt();
 	Serial.println(img);
-	if (img <= numImgs){
+	if ((img <= numImgs) && (0 <= img)){
 		char fileBuff[13];
 		
 		pictures[img].toCharArray(fileBuff,13);
